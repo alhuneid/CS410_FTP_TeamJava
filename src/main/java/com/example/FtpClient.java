@@ -26,7 +26,15 @@ public class FtpClient {
         this.password = password;
     }
 
-    
+
+    Collection<String> listFiles(String path) throws IOException {
+        FTPFile[] files = ftp.listFiles(path);
+        return Arrays.stream(files)
+            .map(FTPFile::getName)
+            .collect(Collectors.toList());
+    }
+
+
     void open() throws IOException {
         System.out.println("Connecting...");
         ftp = new FTPClient();

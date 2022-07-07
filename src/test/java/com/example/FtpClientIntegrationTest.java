@@ -1,3 +1,21 @@
+package com.example;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockftpserver.fake.FakeFtpServer;
+import org.mockftpserver.fake.UserAccount;
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileEntry;
+import org.mockftpserver.fake.filesystem.FileSystem;
+import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
+
+import java.io.IOException;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 public class FtpClientIntegrationTest {
 
     private FakeFtpServer fakeFtpServer;
@@ -25,5 +43,12 @@ public class FtpClientIntegrationTest {
     public void teardown() throws IOException {
         ftpClient.close();
         fakeFtpServer.stop();
+    }
+
+
+    @Test
+    public void givenRemoteFile_whenListingRemoteFiles_thenItIsContainedInList() throws IOException {
+        Collection<String> files = ftpClient.listFiles("");
+        assertTrue(files.contains("foobar.txt"));
     }
 }
