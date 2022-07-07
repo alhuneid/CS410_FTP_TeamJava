@@ -21,6 +21,17 @@
     <jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity>
   </properties>
   <dependencies>
+  <dependency>
+    <groupId>commons-net</groupId>
+    <artifactId>commons-net</artifactId>
+    <version>3.6</version>
+</dependency>
+<dependency> 
+    <groupId>org.mockftpserver</groupId> 
+    <artifactId>MockFtpServer</artifactId> 
+    <version>2.7.1</version> 
+    <scope>test</scope> 
+</dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
