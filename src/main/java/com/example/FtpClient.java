@@ -1,12 +1,14 @@
 package com.example;
 
 import org.apache.commons.net.PrintCommandListener;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -58,7 +60,10 @@ public class FtpClient {
         ftp.disconnect();
     }
 
-    void putFile(File file, String path) throws IOException {
-        ftp.storeFile(path, Files.newInputStream(file.toPath()));
+    void putFile(String fileName, String path) throws IOException {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            ftp.enterLocalPassiveMode();
+            ftp.storeFile(path, inputStream);
+        }
     }
 }

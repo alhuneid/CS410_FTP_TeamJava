@@ -1,11 +1,8 @@
 package com.example;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -45,6 +42,7 @@ public final class App {
         int port = Integer.parseInt(inPort);
 
         FtpClient ftp = new FtpClient(server, port, userName, password);
+
         try {
             ftp.open();
         } catch (IOException e) {
@@ -85,16 +83,11 @@ public final class App {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
-//        System.out.println("Enter path");
-//        String path = input.nextLine();
-//        System.out.println("Path is: " + path);
+        System.out.println("Enter path");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
 
-//        File file = new File(Objects.requireNonNull(App.class.getResource(fileName)).toURI());
-        File file = new File("/" + fileName);
-
-
-        String path = "/My Documents/";
-        ftp.putFile(file, path);
+        ftp.putFile(fileName, path + fileName);
     }
 
     private static void downloadOption(FtpClient ftp) {

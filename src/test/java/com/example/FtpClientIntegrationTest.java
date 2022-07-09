@@ -57,9 +57,10 @@ public class FtpClientIntegrationTest {
 
     @Test
     public void putFileTest() throws URISyntaxException, IOException {
+        String fileName = "helloworld.txt";
+        String path = "/";
 
-        File file = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("helloworld.txt")).toURI());
-        ftpClient.putFile(file, "/helloworld.txt");
+        ftpClient.putFile(fileName, path + fileName);
         assertTrue(fakeFtpServer.getFileSystem().exists("/helloworld.txt"));
     }
 }
