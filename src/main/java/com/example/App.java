@@ -61,9 +61,9 @@ public final class App {
 
         System.out.println(
             "What would you like to do?\n"
-                + "Press 1 - upload file"
-                + "Press 2 - download file"
-                + "Press 3 - exit"
+                + "Press 1 - upload file\n"
+                + "Press 2 - download file\n"
+                + "Press 3 - exit\n"
         );
 
         String userChoice = input.nextLine();
