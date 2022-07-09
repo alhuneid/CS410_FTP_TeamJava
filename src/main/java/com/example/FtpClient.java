@@ -6,6 +6,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -55,5 +56,9 @@ public class FtpClient {
     void close() throws IOException {
         System.out.println("Server closing");
         ftp.disconnect();
+    }
+
+    void putFile(File file, String path) throws IOException {
+        ftp.storeFile(path, Files.newInputStream(file.toPath()));
     }
 }

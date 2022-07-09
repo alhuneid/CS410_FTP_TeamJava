@@ -10,8 +10,11 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,5 +53,13 @@ public class FtpClientIntegrationTest {
     public void givenRemoteFile_whenListingRemoteFiles_thenItIsContainedInList() throws IOException {
         Collection<String> files = ftpClient.listFiles("");
         assertTrue(files.contains("foobar.txt"));
+    }
+
+    @Test
+    public void putFileTest() throws URISyntaxException, IOException {
+
+        File file = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("helloworld.txt")).toURI());
+        ftpClient.putFile(file, "/helloworld.txt");
+        assertTrue(fakeFtpServer.getFileSystem().exists("/helloworld.txt"));
     }
 }
