@@ -22,14 +22,17 @@ public class FtpClientIntegrationTest {
 
     private FtpClient ftpClient;
 
+    private static String dirPath = "/data";
+    private static String fileName = "foobar.txt";
+
     @Before
     public void setup() throws IOException {
         fakeFtpServer = new FakeFtpServer();
-        fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
+        fakeFtpServer.addUserAccount(new UserAccount("user", "password", dirPath));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
-        fileSystem.add(new DirectoryEntry("/data"));
-        fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        fileSystem.add(new DirectoryEntry(dirPath));
+        fileSystem.add(new FileEntry(dirPath +"/"+fileName, "abcdef 1234567890"));
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -50,5 +53,17 @@ public class FtpClientIntegrationTest {
     public void givenRemoteFile_whenListingRemoteFiles_thenItIsContainedInList() throws IOException {
         Collection<String> files = ftpClient.listFiles("");
         assertTrue(files.contains("foobar.txt"));
+    }
+
+    @Test
+    public void createDirectory_in_remote_server() throws IOException {
+        boolean created = ftpClient.createDirectory(dirPath);
+        assertTrue(created);
+    }
+
+    @Test
+    public void deleteFileInDirectory_in_remote_server() throws IOException {
+        boolean deleted = ftpClient.deleteFile(dirPath, fileName);
+        assertTrue(deleted);
     }
 }
