@@ -1,14 +1,14 @@
 package com.example;
 
 import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -62,8 +62,14 @@ public class FtpClient {
 
     void putFile(String fileName, String path) throws IOException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
-            ftp.enterLocalPassiveMode();
             ftp.storeFile(path, inputStream);
         }
+    }
+
+    void getFile(String fileName, String remotePath) throws IOException {
+        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+        FileOutputStream out = new FileOutputStream(localPath + fileName);
+        ftp.retrieveFile(remotePath + fileName, out);
+        out.close();
     }
 }

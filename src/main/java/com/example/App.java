@@ -1,6 +1,5 @@
 package com.example;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -90,11 +89,16 @@ public final class App {
         ftp.putFile(fileName, path + fileName);
     }
 
-    private static void downloadOption(FtpClient ftp) {
+    private static void downloadOption(FtpClient ftp) throws IOException {
         Scanner input = new Scanner(System.in);
 
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
+        System.out.println("Enter remote path");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
+
+        ftp.getFile(fileName, path);
     }
 }
