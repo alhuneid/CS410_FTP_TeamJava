@@ -56,4 +56,16 @@ public class FtpClient {
         System.out.println("Server closing");
         ftp.disconnect();
     }
+
+    //Rename file or directory
+    boolean renameFile(String fileName, String newFileName) throws IOException {
+       if (this.ftp.rename(fileName,newFileName) ) {
+           System.out.println("File " + fileName + " has been renamed to " + newFileName);
+           return true;
+       } else {
+           System.out.println("Failed to rename file");
+           return false;
+       }
+    }
+
 }
