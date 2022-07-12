@@ -92,7 +92,7 @@ public class FtpClient {
             DateFormat dateFormatter = new SimpleDateFormat("MM-dd-yyyy hh:mm");
 
             for (FTPFile file : files) {
-                java.lang.String details = file.getName();
+                String details = file.getName();
                 if (file.isDirectory()) {
                     details = "[" + details + "]";
                 }

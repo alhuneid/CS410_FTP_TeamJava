@@ -103,4 +103,5 @@ public class FtpClientIntegrationTest {
         result = ftpClient.getDirectoriesAndFiles();
         assertTrue(result.contains("sample.txt"));
     }
+
 }
