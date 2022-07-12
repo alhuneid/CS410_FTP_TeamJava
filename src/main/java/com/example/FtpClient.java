@@ -9,9 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.lang.String;
 
 public class FtpClient {
 
@@ -71,5 +74,52 @@ public class FtpClient {
         FileOutputStream out = new FileOutputStream(localPath + fileName);
         ftp.retrieveFile(remotePath + fileName, out);
         out.close();
+    }
+
+    /**
+     * Use this function to return the directories and files included in the
+     * current directory (like the "ls" command in Linux). You will need to do
+     * System.out.println with the String that's returned back from this method.
+     * @return a String with the current files and directories, along with
+     *          their sizes and the dates they were last changed
+     */
+    String getDirectoriesAndFiles() {
+        StringBuilder result = new StringBuilder();
+        try {
+            FTPFile[] files = ftp.listFiles();
+
+            // iterates over the files and prints details for each
+            DateFormat dateFormatter = new SimpleDateFormat("MM-dd-yyyy hh:mm");
+
+            for (FTPFile file : files) {
+                java.lang.String details = file.getName();
+                if (file.isDirectory()) {
+                    details = "[" + details + "]";
+                }
+                details += "\t\t" + file.getSize() + "\t\t" + dateFormatter.format(file.getTimestamp().getTime());
+                result.append(details).append("\n");
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        return result.toString();
+    }
+
+    /**
+     * Use this to go into or out of a directory (like the "cd" command on Linux
+     * to go up one level, use 'changeDirectory("..")'
+     * to go down one level, use 'changeDirectory("folder-name")'
+     * @param path name of folder to drill down into
+     */
+    void changeDirectory(String path) {
+        try {
+            boolean success = ftp.changeWorkingDirectory(path);
+
+            if (!success) {
+                System.out.println("Failed to change working directory");
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

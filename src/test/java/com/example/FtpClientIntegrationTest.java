@@ -10,13 +10,16 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class FtpClientIntegrationTest {
@@ -24,6 +27,14 @@ public class FtpClientIntegrationTest {
     private FakeFtpServer fakeFtpServer;
 
     private FtpClient ftpClient;
+
+    /**
+     *  private variables for utilizing streams to check for system outputs
+     */
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
 
     @Before
     public void setup() throws IOException {
@@ -33,6 +44,8 @@ public class FtpClientIntegrationTest {
         FileSystem fileSystem = new UnixFakeFileSystem();
         fileSystem.add(new DirectoryEntry("/data"));
         fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        fileSystem.add(new DirectoryEntry("/test"));
+        fileSystem.add(new FileEntry("/test/sample.txt", "1234567890 abcdef"));
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -74,5 +87,20 @@ public class FtpClientIntegrationTest {
         File file = new File(localPath + fileName);
         assertTrue(file.exists());
         assertTrue(file.delete());
+    }
+
+    @Test
+    public void getDirectoriesAndFilesTest() {
+        ftpClient.changeDirectory("..");
+        String result = ftpClient.getDirectoriesAndFiles();
+        assertTrue(result.contains("data"));
+
+        ftpClient.changeDirectory("/data");
+        result = ftpClient.getDirectoriesAndFiles();
+        assertTrue(result.contains("foobar.txt"));
+
+        ftpClient.changeDirectory("../test");
+        result = ftpClient.getDirectoriesAndFiles();
+        assertTrue(result.contains("sample.txt"));
     }
 }
