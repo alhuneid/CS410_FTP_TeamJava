@@ -1,11 +1,10 @@
 package com.example;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

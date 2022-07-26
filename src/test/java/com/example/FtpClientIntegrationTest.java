@@ -1,7 +1,7 @@
 package com.example;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -14,12 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class FtpClientIntegrationTest {
