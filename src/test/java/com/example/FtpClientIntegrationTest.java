@@ -44,6 +44,7 @@ public class FtpClientIntegrationTest {
         fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
         fileSystem.add(new DirectoryEntry("/test"));
         fileSystem.add(new FileEntry("/test/sample.txt", "1234567890 abcdef"));
+
         fakeFtpServer.setFileSystem(fileSystem);
         fakeFtpServer.setServerControlPort(0);
 
@@ -101,6 +102,25 @@ public class FtpClientIntegrationTest {
         File file = new File(localPath + fileName);
         assertTrue(file.exists());
         assertTrue(file.delete());
+    }
+
+    @Test
+    public void getMultipleFilesTest() throws IOException {
+        String fileName1 = "foobar.txt";
+        String remotePath = "/data/";
+        String remotePath2 = "/test/";
+        String fileName2 = "sample.txt";
+        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put(fileName1, remotePath);
+        map.put(fileName2, remotePath2);
+
+        ftpClient.getMultipleFiles(map);
+        File file = new File(localPath + fileName1);
+        File file2 = new File(localPath + fileName2);
+        assertTrue(file.exists());
+        assertTrue(file2.exists());
     }
 
     @Test
