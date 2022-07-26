@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -180,8 +181,8 @@ public final class App {
 
         System.out.println(
             "What would you like to do?\n"
-                + "Press 1 - upload file\n"
-                + "Press 2 - download file\n"
+                + "Press 1 - upload file(s)\n"
+                + "Press 2 - download file(s)\n"
                 + "Press 3 - list all files in current directory\n"
                 + "Press 4 - exit\n"
         );
@@ -202,31 +203,57 @@ public final class App {
     }
 
     private static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
-       // Scanner input = new Scanner(System.in);
+        int count = 0;
+        HashMap<String, String> map = new HashMap<>();
 
-        System.out.println("Enter file name");
-        String fileName = input.nextLine();
-        System.out.println("File name is: " + fileName);
-        System.out.println("Enter path");
-        String path = input.nextLine();
-        System.out.println("Path is: " + path);
-        //input.close();
+        System.out.println("How many files would you like to upload?");
+        count = Integer.parseInt(input.nextLine());
 
-        ftp.putFile(fileName, path);
+        while (count < 0) {
+            System.out.println("Invalid response. Please input an integer greater than zero.");
+            System.out.println("How many files would you like to upload?");
+            count = Integer.parseInt(input.nextLine());
+        }
+
+        for (int i = 1; i <= count; i++) {
+            System.out.println("Enter file name " + i);
+            String fileName = input.nextLine();
+            System.out.println("File name " + i + " is: " + fileName);
+            System.out.println("Enter path for file " + i);
+            String path = input.nextLine();
+            System.out.println("Path for file " + i + " is: " + path);
+            map.put(fileName,path);
+        }
+
+        System.out.println("Uploading files...");
+
+        ftp.putMultipleFiles(map);
     }
 
     private static void downloadOption(FtpClient ftp) throws IOException {
-        //Scanner input = new Scanner(System.in);
+        int count = 0;
+        HashMap<String, String> map = new HashMap<>();
 
-        System.out.println("Enter file name");
-        String fileName = input.nextLine();
-        System.out.println("File name is: " + fileName);
-        System.out.println("Enter remote path");
-        String path = input.nextLine();
-        System.out.println("Path is: " + path);
-        //input.close();
+        System.out.println("How many files would you like to download?");
+        count = Integer.parseInt(input.nextLine());
 
-        ftp.getFile(fileName, path);
+        while (count < 0) {
+            System.out.println("Invalid response. Please input an integer greater than zero.");
+            System.out.println("How many files would you like to upload?");
+            count = Integer.parseInt(input.nextLine());
+        }
+
+        for (int i = 1; i <= count; i++) {
+            System.out.println("Enter file name " + i);
+            String fileName = input.nextLine();
+            System.out.println("File name " + i + " is: " + fileName);
+            System.out.println("Enter remote path for file " + i);
+            String path = input.nextLine();
+            System.out.println("Remote path for file " + i + " is: " + path);
+            map.put(fileName,path);
+        }
+
+        ftp.getMultipleFiles(map);
     }
 
     /**

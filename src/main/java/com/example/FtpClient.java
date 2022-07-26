@@ -100,7 +100,7 @@ public class FtpClient {
      * @throws IOException
      */
     void getFile(String fileName, String remotePath) throws IOException {
-        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+        String localPath = System.getProperty("user.dir") + "/src/main/resources/";
         FileOutputStream out = new FileOutputStream(localPath + fileName);
         ftp.retrieveFile(remotePath + fileName, out);
         out.close();
@@ -109,6 +109,7 @@ public class FtpClient {
     /**
      * This method will download multiple files from the ftp server.
      * File names must be unique.
+     * Files will download to resources folder.
      *
      * @param files map of (file name, remote path)
      */
