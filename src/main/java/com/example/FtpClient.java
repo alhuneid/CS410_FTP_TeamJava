@@ -81,4 +81,31 @@ public class FtpClient {
         System.out.println("File '" + deleted + "' deleted...");
         return deleted;
     }
-}
+    // rename file on local machine
+    public boolean renameLocalFile(String fromFilePath, String toFilePath) throws IOException {
+        boolean renamed = false;
+        File fromFile = new File(fromFilePath);
+        File toFile = new File(toFilePath);
+        try {
+            renamed = fromFile.renameTo(toFile);
+        }catch (IOException ioe){
+            System.out.println("Unable to rename file " + fromFile);
+            throw ioe;            
+        }
+        System.out.println("File " + fromFile + " renamed to "+toFile);
+        return renamed;
+    }
+    // change permission on remote server
+    public boolean changePermissionOnRemoteFile(String dirPath) throws IOException {
+        boolean changePermission = false;
+        try {
+            changePermission = ftp.sendSiteCommand("chmod " + "755 " + dirPath);
+        }catch (IOException ioe){
+            System.out.println("Unable to change permission for  " + dirPath);
+            throw ioe;            
+        }
+        System.out.println("Permission updated for " + dirPath);
+        return changePermission;
+    }
+    }
+
