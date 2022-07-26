@@ -5,6 +5,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.platform.engine.support.descriptor.FilePosition;
 import org.junit.platform.engine.support.descriptor.FileSource;
 import org.mockftpserver.fake.FakeFtpServer;
@@ -17,6 +19,7 @@ import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 import java.io.IOException;
 import java.nio.file.FileStore;
 import java.util.Collection;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +29,6 @@ public class FtpClientIntegrationTest {
     private FakeFtpServer fakeFtpServer;
 
     private FtpClient ftpClient;
-
     private static String dirPath = "/data";
     private static String fileName = "foobar.txt";
     private static String fromFilePath;
@@ -51,10 +53,10 @@ public class FtpClientIntegrationTest {
 
     @After
     public void teardown() throws IOException {
+        System.out.println("Calling Teardown");
         ftpClient.close();
         fakeFtpServer.stop();
     }
-
 
     @Test
     public void givenRemoteFile_whenListingRemoteFiles_thenItIsContainedInList() throws IOException {
@@ -64,7 +66,7 @@ public class FtpClientIntegrationTest {
 
     @Test
     public void createDirectory_in_remote_server() throws IOException {
-        boolean created = ftpClient.createDirectory(dirPath);
+        boolean created = ftpClient.createDirectory("/subdir");
         assertTrue(created);
     }
 
@@ -73,12 +75,18 @@ public class FtpClientIntegrationTest {
         boolean deleted = ftpClient.deleteFile(dirPath, fileName);
         assertTrue(deleted);
     }
+
     @Test
     public void rename_file_on_local_machine() throws IOException {
-        boolean renamed = ftpClient.renameLocalFile(fromFilePath,toFilePath);
+        String sourceFile = "srcfile.txt";
+        String destFile = "destfile.txt";
+        File srcFile = new File(sourceFile);
+        srcFile.createNewFile();
+        boolean renamed = ftpClient.renameLocalFile(sourceFile, destFile);
         assertTrue(renamed);
-        
-        }
+        boolean deleted = new File(destFile).delete();
+        assertTrue(deleted);
+    }
     
     @Test
     public void change_permission_on_remote_server() throws IOException {
