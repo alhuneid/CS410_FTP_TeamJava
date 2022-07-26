@@ -1,8 +1,12 @@
 package com.example;
 
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.platform.engine.support.descriptor.FilePosition;
+import org.junit.platform.engine.support.descriptor.FileSource;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
@@ -11,6 +15,7 @@ import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
 import java.io.IOException;
+import java.nio.file.FileStore;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +29,8 @@ public class FtpClientIntegrationTest {
 
     private static String dirPath = "/data";
     private static String fileName = "foobar.txt";
+    private static String fromFilePath;
+    private static String toFilePath;
 
     @Before
     public void setup() throws IOException {
@@ -65,5 +72,17 @@ public class FtpClientIntegrationTest {
     public void deleteFileInDirectory_in_remote_server() throws IOException {
         boolean deleted = ftpClient.deleteFile(dirPath, fileName);
         assertTrue(deleted);
+    }
+    @Test
+    public void rename_file_on_local_machine() throws IOException {
+        boolean renamed = ftpClient.renameLocalFile(fromFilePath,toFilePath);
+        assertTrue(renamed);
+        
+        }
+    
+    @Test
+    public void change_permission_on_remote_server() throws IOException {
+        boolean changePermission = ftpClient.changePermissionOnRemoteFile(dirPath);
+        assertTrue(changePermission);
     }
 }
