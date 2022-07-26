@@ -27,6 +27,7 @@ public class FtpClient {
     }
 
     Collection<String> listFiles(String path) throws IOException {
+        System.out.println("PATH ===> " + path);
         FTPFile[] files = ftp.listFiles(path);
         return Arrays.stream(files)
                 .map(FTPFile::getName)
@@ -64,7 +65,7 @@ public class FtpClient {
             System.out.println("Failed to create directory " + dirPath);
             throw ioe;
         }
-        System.out.println("Successfully created: " + dirPath);
+        System.out.println("Successfully created: " + dirPath +" flag="+success);
         return success;
     }
 
@@ -86,15 +87,13 @@ public class FtpClient {
         boolean renamed = false;
         File fromFile = new File(fromFilePath);
         File toFile = new File(toFilePath);
-        try {
-            renamed = fromFile.renameTo(toFile);
-        }catch (IOException ioe){
-            System.out.println("Unable to rename file " + fromFile);
-            throw ioe;            
-        }
-        System.out.println("File " + fromFile + " renamed to "+toFile);
+        
+        System.out.println("from file -----> "+fromFile.getAbsolutePath());
+        renamed = fromFile.renameTo(toFile);
+        System.out.println("File " + fromFile + " renamed to "+toFile + " renamed="+renamed);
         return renamed;
     }
+
     // change permission on remote server
     public boolean changePermissionOnRemoteFile(String dirPath) throws IOException {
         boolean changePermission = false;
