@@ -65,7 +65,7 @@ public final class App {
         } catch (IOException | URISyntaxException e) {
             System.err.println(e.getMessage());
         }
-        
+
     }
 
     //This function gets all the connection info from the user, and
@@ -80,7 +80,7 @@ public final class App {
 
 
 
-        
+
             if (connectionInfo.isFile())
             {
                 System.out.println("Saved connection information found. Would you like to load? Y/N");
@@ -145,8 +145,8 @@ public final class App {
                         e.printStackTrace();
                       }
 
-            } 
-    
+            }
+
     return obj;
 }
 //Loads info from file.
@@ -185,7 +185,7 @@ public final class App {
                 + "Press 3 - list all files in current directory\n"
                 + "Press 4 - exit\n"
         );
-       
+
         String userChoice = input.nextLine();
 
 
@@ -198,7 +198,7 @@ public final class App {
         } else {
             System.out.println("Exiting");
         }
-    
+
     }
 
     private static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
@@ -212,7 +212,7 @@ public final class App {
         System.out.println("Path is: " + path);
         //input.close();
 
-        ftp.putFile(fileName, path + fileName);
+        ftp.putFile(fileName, path);
     }
 
     private static void downloadOption(FtpClient ftp) throws IOException {
