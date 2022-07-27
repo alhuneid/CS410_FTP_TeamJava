@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.lang.String;
 
@@ -61,17 +62,60 @@ public class FtpClient {
         ftp.disconnect();
     }
 
+    /**
+     * This method will upload the designated file to the ftp server
+     *
+     * @param fileName name of the file
+     * @param path path of the file
+     * @throws IOException
+     */
     void putFile(String fileName, String path) throws IOException {
+        String fullPath = path + fileName;
+
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
-            ftp.storeFile(path, inputStream);
+            ftp.storeFile(fullPath, inputStream);
         }
     }
 
+    /**
+     * This method will upload multiple files to the ftp server.
+     * File names must be unique.
+     *
+     * @param files map of (file name, path)
+     */
+    void putMultipleFiles(Map<String, String> files) throws IOException {
+        for (String file : files.keySet()) {
+            String path = files.get(file);
+            putFile(file, path);
+        }
+    }
+
+    /**
+     * This method will download the designated file from the ftp server
+     *
+     * @param fileName name of the file
+     * @param remotePath remote path of the file
+     * @throws IOException
+     */
     void getFile(String fileName, String remotePath) throws IOException {
-        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+        String localPath = System.getProperty("user.dir") + "/src/main/resources/";
         FileOutputStream out = new FileOutputStream(localPath + fileName);
         ftp.retrieveFile(remotePath + fileName, out);
         out.close();
+    }
+
+    /**
+     * This method will download multiple files from the ftp server.
+     * File names must be unique.
+     * Files will download to resources folder.
+     *
+     * @param files map of (file name, remote path)
+     */
+    void getMultipleFiles(Map<String, String> files) throws IOException {
+        for (String file : files.keySet()) {
+            String path = files.get(file);
+            getFile(file, path);
+        }
     }
 
     /**
