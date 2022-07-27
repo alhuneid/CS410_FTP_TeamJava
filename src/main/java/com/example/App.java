@@ -1,5 +1,8 @@
 package com.example;
 
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -20,38 +23,43 @@ public final class App {
 
     /**
      * Says hello to the world.
+     *
      * @param args The arguments of the program.
      */
 
-     //Was having various crashes when each function had their own scanner.
-     //This seems to fix it.
-    private static Scanner input  = new Scanner(System.in);
+    //Was having various crashes when each function had their own scanner.
+    //This seems to fix it.
+    private static Scanner input = new Scanner(System.in);
 
 
-     //This class essentially acts as a struct to hold all the info
-     //needed to connect to the FTP server.
-     static class loginInfo
-     {
+    //This class essentially acts as a struct to hold all the info
+    //needed to connect to the FTP server.
+    static class loginInfo {
         String username;
         String password;
         String server;
         int port;
-        public loginInfo(){
+
+        public loginInfo() {
             username = "";
             password = "";
             server = "";
             port = 0;
         }
+
         boolean isValid() {
             if (username.equals("") || server.equals("") || port == 0)
                 return false;
             return true;
         }
-     };
+    }
+
+    ;
+
     public static void main(String[] args) {
 
-       loginInfo obj = getConnectionInfo();
-       FtpClient ftp = new FtpClient(obj.server, obj.port, obj.username, obj.password);
+        loginInfo obj = getConnectionInfo();
+        FtpClient ftp = new FtpClient(obj.server, obj.port, obj.username, obj.password);
 
         try {
             ftp.open();
@@ -65,13 +73,14 @@ public final class App {
         } catch (IOException | URISyntaxException e) {
             System.err.println(e.getMessage());
         }
-        
+
     }
 
     //This function gets all the connection info from the user, and
     //gives them the option to save it to a file for next time.
     public static loginInfo getConnectionInfo() {
-        loginInfo obj = new loginInfo();;
+        loginInfo obj = new loginInfo();
+        ;
         String inPort;
         String userInput;
         boolean fileExists = false;
@@ -79,100 +88,92 @@ public final class App {
         File connectionInfo = new File("connectionInfo.txt");
 
 
+        if (connectionInfo.isFile()) {
+            System.out.println("Saved connection information found. Would you like to load? Y/N");
+            fileExists = true;
 
-        
-            if (connectionInfo.isFile())
-            {
-                System.out.println("Saved connection information found. Would you like to load? Y/N");
-                fileExists = true;
-
-                userInput = input.nextLine().toUpperCase();
-                if (userInput.equals("Y"))
-                {
-                    obj = loadConnectionInfo();
-                    //Make sure that loaded info has a username, server and port.
-                    if (!obj.isValid())
-                    {
-                        System.out.println("Connection info bad or not valid, please enter connection info manually.");
-                    }
-                    else
-                    {
-                        return obj;
-                    }
+            userInput = input.nextLine().toUpperCase();
+            if (userInput.equals("Y")) {
+                obj = loadConnectionInfo();
+                //Make sure that loaded info has a username, server and port.
+                if (!obj.isValid()) {
+                    System.out.println("Connection info bad or not valid, please enter connection info manually.");
+                } else {
+                    return obj;
                 }
             }
+        }
 
 
-            System.out.println("Enter username");
-            obj.username = input.nextLine();
+        System.out.println("Enter username");
+        obj.username = input.nextLine();
 
-            System.out.println("Enter password");
-            obj.password = input.nextLine();
+        System.out.println("Enter password");
+        obj.password = input.nextLine();
 
-            System.out.println("Enter server");
-            obj.server = input.nextLine();
+        System.out.println("Enter server");
+        obj.server = input.nextLine();
 
-            System.out.println("Enter port");
-            inPort = input.nextLine();
-            obj.port = Integer.parseInt(inPort);
+        System.out.println("Enter port");
+        inPort = input.nextLine();
+        obj.port = Integer.parseInt(inPort);
 
-            System.out.println("Would you like to save connection information for next time? Y/N");
-            userInput = input.nextLine().toUpperCase();
+        System.out.println("Would you like to save connection information for next time? Y/N");
+        userInput = input.nextLine().toUpperCase();
 
-           // input.close();
+        // input.close();
 
-            if (userInput.equals("Y"))
-            {
-                //If no file exists, create one now:
-                if (!fileExists)
-                {
-                    try {
-                        connectionInfo.createNewFile();
-                    } catch (IOException e) {
-                        System.out.println("Error: Could not create new connection info file.");
-                    }
+        if (userInput.equals("Y")) {
+            //If no file exists, create one now:
+            if (!fileExists) {
+                try {
+                    connectionInfo.createNewFile();
+                } catch (IOException e) {
+                    System.out.println("Error: Could not create new connection info file.");
                 }
-                    try {
-                        FileWriter myWriter = new FileWriter("connectionInfo.txt");
-                        myWriter.write(obj.username + "\n");
-                        myWriter.append(obj.password + "\n");
-                        myWriter.append(obj.server + "\n");
-                        myWriter.append(inPort);
-                        myWriter.close();
-                        System.out.println("Successfully saved connection info.");
-                      } catch (IOException e) {
-                        System.out.println("An error occurred.");
-                        e.printStackTrace();
-                      }
+            }
+            try {
+                FileWriter myWriter = new FileWriter("connectionInfo.txt");
+                myWriter.write(obj.username + "\n");
+                myWriter.append(obj.password + "\n");
+                myWriter.append(obj.server + "\n");
+                myWriter.append(inPort);
+                myWriter.close();
+                System.out.println("Successfully saved connection info.");
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
 
-            } 
-    
-    return obj;
-}
-//Loads info from file.
+        }
+
+        return obj;
+    }
+
+    //Loads info from file.
     public static loginInfo loadConnectionInfo() {
         loginInfo obj = new loginInfo();
 
         try {
-			Scanner scanner = new Scanner(new File("connectionInfo.txt"));
-			if (scanner.hasNextLine()) {
+            Scanner scanner = new Scanner(new File("connectionInfo.txt"));
+            if (scanner.hasNextLine()) {
                 obj.username = scanner.nextLine();
-			}
+            }
             if (scanner.hasNextLine()) {
                 obj.password = scanner.nextLine();
-			}
+            }
             if (scanner.hasNextLine()) {
                 obj.server = scanner.nextLine();
-			}
+            }
             if (scanner.hasNextLine()) {
                 obj.port = Integer.parseInt(scanner.nextLine());
-			}
+            }
             while (scanner.hasNextLine())
                 scanner.nextLine();
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         return obj;
     }
 
@@ -182,27 +183,36 @@ public final class App {
             "What would you like to do?\n"
                 + "Press 1 - upload file\n"
                 + "Press 2 - download file\n"
-                + "Press 3 - list all files in current directory\n"
-                + "Press 4 - exit\n"
+                + "Press 3 - list all files in current directory on server\n"
+                + "Press 4 - search for files in directory on server\n"
+                + "Press 5 - list all files in current directory on local machine\n"
+                + "Press 6 - search for files in directory on local machine\n"
+                + "Press 7 - exit\n"
         );
-       
+
         String userChoice = input.nextLine();
 
 
         if (Objects.equals(userChoice, "1")) {
             uploadOption(ftp);
-        } else if (Objects.equals(userChoice, "2")){
+        } else if (Objects.equals(userChoice, "2")) {
             downloadOption(ftp);
-        } else if (Objects.equals(userChoice, "3")){
-            listDirectoriesAndFiles();
+        } else if (Objects.equals(userChoice, "3")) {
+            System.out.print(ftp.getDirectoriesAndFiles());
+        } else if (Objects.equals(userChoice, "4")) {
+            searchFilesOption(ftp);
+        } else if (Objects.equals(userChoice, "5")) {
+            System.out.println(listDirectoriesAndFiles());
+        } else if (Objects.equals(userChoice, "6")) {
+            searchOption();
         } else {
             System.out.println("Exiting");
         }
-    
+
     }
 
     private static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
-       // Scanner input = new Scanner(System.in);
+        // Scanner input = new Scanner(System.in);
 
         System.out.println("Enter file name");
         String fileName = input.nextLine();
@@ -229,8 +239,31 @@ public final class App {
         ftp.getFile(fileName, path);
     }
 
+    private static void searchFilesOption(FtpClient ftp) throws IOException  {
+        System.out.println("Enter file name");
+        String fileName = input.nextLine();
+        System.out.println("File name is: " + fileName);
+        System.out.println("Enter path or blank for current directory");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
+
+        System.out.println(ftp.searchFiles(path, fileName));
+    }
+
+    private static void searchOption() {
+        System.out.println("Enter file name");
+        String fileName = input.nextLine();
+        System.out.println("File name is: " + fileName);
+        System.out.println("Enter path or blank for current directory");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
+
+        System.out.println(searchFiles(path, fileName));
+    }
+
     /**
      * List all files and directories in the current directory only
+     *
      * @return a String that you need to capture in a variable or print out
      * todo: align printed out text if there is time
      */
@@ -255,5 +288,27 @@ public final class App {
             }
         }
         return result.toString();
+    }
+
+    public static String searchFiles(String dirToSearch, String searchString) {
+        String directory = ".";
+        StringBuilder returnedText = new StringBuilder();
+
+        // if the directory is empty then just search in the current directory, else...
+        if (!dirToSearch.equals("")) {
+            directory = dirToSearch;
+        }
+
+        File dir = new File(directory);
+        File[] files = dir.listFiles((dir1, name) -> name.contains(searchString));
+
+        if (files != null && files.length > 0) {
+            returnedText.append("SEARCH RESULT: ");
+            for (File aFile : files) {
+                returnedText.append(aFile.getName()).append("\n");
+            }
+        }
+
+        return returnedText.toString();
     }
 }

@@ -1,9 +1,7 @@
 package com.example;
 
 import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -121,5 +119,35 @@ public class FtpClient {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    String searchFiles(String dirToSearch, String searchString){
+        FTPFile[] result = null;
+        String directory = ".";
+        StringBuilder returnedText = new StringBuilder();
+
+        // implement FTPFileFilter interface and override accept() method
+        FTPFileFilter myFilter = ftpFile -> (
+            ftpFile.isFile() && ftpFile.getName().contains(searchString));
+
+        // if the directory is empty then just search in the current directory, else...
+        if (!dirToSearch.equals("")) {
+            directory = dirToSearch;
+        }
+
+        try {
+            result = ftp.listFiles(directory, myFilter);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        if (result != null && result.length > 0) {
+            returnedText.append("SEARCH RESULT: ");
+            for (FTPFile aFile : result) {
+                returnedText.append(aFile.getName()).append("\n");
+            }
+        }
+
+        return returnedText.toString();
     }
 }

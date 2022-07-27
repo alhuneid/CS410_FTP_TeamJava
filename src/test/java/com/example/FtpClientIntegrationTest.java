@@ -101,4 +101,25 @@ public class FtpClientIntegrationTest {
         assertTrue(result.contains("sample.txt"));
     }
 
+    @Test
+    public void searchFilesTestReturnsValidFile() {
+        String dirToSearch = "/data";
+        String searchString = "foo";
+        String fullTextFileName = "foobar.txt";
+
+        String result = ftpClient.searchFiles(dirToSearch, searchString);
+        assertTrue(result.contains(searchString));
+        assertTrue(result.contains(fullTextFileName));
+    }
+
+    @Test
+    public void searchFilesWithEmptyDirectoryReturnsValidFile() throws IOException {
+        String fileName = "sample.txt";
+        ftpClient.changeDirectory("../test");
+        String result = ftpClient.getDirectoriesAndFiles();
+        assertTrue(result.contains(fileName));
+
+        String searchResult = ftpClient.searchFiles("", fileName);
+        assertTrue(result.contains(fileName));
+    }
 }
