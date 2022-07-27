@@ -1,7 +1,7 @@
 package com.example;
 
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -13,8 +13,8 @@ import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Collection;
+import java.io.PrintStream;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,6 +25,10 @@ public class FtpClientIntegrationTest {
     private FakeFtpServer fakeFtpServer;
 
     private FtpClient ftpClient;
+    private static String dirPath = "/data";
+    private static String fileName = "foobar.txt";
+    private static String fromFilePath;
+    private static String toFilePath;
 
     /**
      *  private variables for utilizing streams to check for system outputs
@@ -37,11 +41,11 @@ public class FtpClientIntegrationTest {
     @Before
     public void setup() throws IOException {
         fakeFtpServer = new FakeFtpServer();
-        fakeFtpServer.addUserAccount(new UserAccount("user", "password", "/data"));
+        fakeFtpServer.addUserAccount(new UserAccount("user", "password", dirPath));
 
         FileSystem fileSystem = new UnixFakeFileSystem();
-        fileSystem.add(new DirectoryEntry("/data"));
-        fileSystem.add(new FileEntry("/data/foobar.txt", "abcdef 1234567890"));
+        fileSystem.add(new DirectoryEntry(dirPath));
+        fileSystem.add(new FileEntry(dirPath +"/"+fileName, "abcdef 1234567890"));
         fileSystem.add(new DirectoryEntry("/test"));
         fileSystem.add(new FileEntry("/test/sample.txt", "1234567890 abcdef"));
 
@@ -56,15 +60,45 @@ public class FtpClientIntegrationTest {
 
     @After
     public void teardown() throws IOException {
+        System.out.println("Calling Teardown");
         ftpClient.close();
         fakeFtpServer.stop();
     }
-
 
     @Test
     public void givenRemoteFile_whenListingRemoteFiles_thenItIsContainedInList() throws IOException {
         Collection<String> files = ftpClient.listFiles("");
         assertTrue(files.contains("foobar.txt"));
+    }
+
+    @Test
+    public void createDirectory_in_remote_server() throws IOException {
+        boolean created = ftpClient.createDirectory("/subdir");
+        assertTrue(created);
+    }
+
+    @Test
+    public void deleteFileInDirectory_in_remote_server() throws IOException {
+        boolean deleted = ftpClient.deleteFile(dirPath, fileName);
+        assertTrue(deleted);
+    }
+
+    @Test
+    public void rename_file_on_local_machine() throws IOException {
+        String sourceFile = "srcfile.txt";
+        String destFile = "destfile.txt";
+        File srcFile = new File(sourceFile);
+        srcFile.createNewFile();
+        boolean renamed = ftpClient.renameLocalFile(sourceFile, destFile);
+        assertTrue(renamed);
+        boolean deleted = new File(destFile).delete();
+        assertTrue(deleted);
+    }
+    
+    @Test
+    public void change_permission_on_remote_server() throws IOException {
+        boolean changePermission = ftpClient.changePermissionOnRemoteFile(dirPath);
+        assertTrue(changePermission);
     }
 
     @Test
@@ -96,12 +130,13 @@ public class FtpClientIntegrationTest {
     public void getFileTest() throws IOException {
         String fileName = "foobar.txt";
         String remotePath = "/data/";
-        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
-
+        //Ensure to use file seperator to work on all operation system
+        String fileSep = System.getProperty("file.separator");
+        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep +"resources"+ fileSep;
         ftpClient.getFile(fileName, remotePath);
         File file = new File(localPath + fileName);
+        System.out.println(file.getAbsolutePath());
         assertTrue(file.exists());
-        assertTrue(file.delete());
     }
 
     @Test
@@ -110,7 +145,8 @@ public class FtpClientIntegrationTest {
         String remotePath = "/data/";
         String remotePath2 = "/test/";
         String fileName2 = "sample.txt";
-        String localPath = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+        String fileSep = System.getProperty("file.separator");
+        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep +"resources"+ fileSep;
 
         HashMap<String, String> map = new HashMap<>();
         map.put(fileName1, remotePath);

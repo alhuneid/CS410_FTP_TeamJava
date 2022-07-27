@@ -2,7 +2,7 @@ package com.example;
 
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.*;
-
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +31,13 @@ public class FtpClient {
         this.password = password;
     }
 
-
     Collection<String> listFiles(String path) throws IOException {
+        System.out.println("PATH ===> " + path);
         FTPFile[] files = ftp.listFiles(path);
         return Arrays.stream(files)
-            .map(FTPFile::getName)
-            .collect(Collectors.toList());
+                .map(FTPFile::getName)
+                .collect(Collectors.toList());
     }
-
 
     void open() throws IOException {
         System.out.println("Connecting...");
@@ -60,6 +59,58 @@ public class FtpClient {
     void close() throws IOException {
         System.out.println("Server closing");
         ftp.disconnect();
+    }
+
+    // Create a directory
+    public boolean createDirectory(String dirPath) throws IOException {
+        boolean success = false;
+        try {
+            success = ftp.makeDirectory(dirPath);
+        } catch (IOException ioe) {
+            System.out.println("Failed to create directory " + dirPath);
+            throw ioe;
+        }
+        System.out.println("Successfully created: " + dirPath +" flag="+success);
+        return success;
+    }
+
+    // Delete file
+    public boolean deleteFile(String dirPath, String fileName) throws IOException {
+        String fileToDelete = dirPath + "/" + fileName;
+        boolean deleted = false;
+        try {
+            deleted = ftp.deleteFile(fileToDelete);
+        } catch (IOException ioe) {
+            System.out.println("File '" + deleted + "' deleted...");
+            throw ioe;
+        }
+        System.out.println("File '" + deleted + "' deleted...");
+        return deleted;
+    }
+    
+    // rename file on local machine
+    public boolean renameLocalFile(String fromFilePath, String toFilePath) throws IOException {
+        boolean renamed = false;
+        File fromFile = new File(fromFilePath);
+        File toFile = new File(toFilePath);
+        
+        System.out.println("from file -----> "+fromFile.getAbsolutePath());
+        renamed = fromFile.renameTo(toFile);
+        System.out.println("File " + fromFile + " renamed to "+toFile + " renamed="+renamed);
+        return renamed;
+    }
+
+    // change permission on remote server
+    public boolean changePermissionOnRemoteFile(String dirPath) throws IOException {
+        boolean changePermission = false;
+        try {
+            changePermission = ftp.sendSiteCommand("chmod " + "755 " + dirPath);
+        }catch (IOException ioe){
+            System.out.println("Unable to change permission for  " + dirPath);
+            throw ioe;            
+        }
+        System.out.println("Permission updated for " + dirPath);
+        return changePermission;
     }
 
     /**
@@ -100,7 +151,8 @@ public class FtpClient {
     void getFile(String fileName, String remotePath) throws IOException {
         String localPath = System.getProperty("user.dir") + "/src/main/resources/";
         FileOutputStream out = new FileOutputStream(localPath + fileName);
-        ftp.retrieveFile(remotePath + fileName, out);
+        boolean download = ftp.retrieveFile(remotePath + fileName, out);
+        System.out.println("downloaded = "+download);
         out.close();
     }
 
