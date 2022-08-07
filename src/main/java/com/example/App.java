@@ -178,6 +178,7 @@ public final class App {
     }
 
     private static void chooseOption(FtpClient ftp) throws IOException, URISyntaxException {
+        String userChoice = "";
 
         System.out.println(
             "What would you like to do?\n"
@@ -187,28 +188,75 @@ public final class App {
                 + "Press 4 - search for files in directory on server\n"
                 + "Press 5 - list all files in current directory on local machine\n"
                 + "Press 6 - search for files in directory on local machine\n"
-                + "Press 7 - exit\n"
+                + "Press 7 - create directory on remote server\n"
+                + "Press 8 - delete file on remote server\n"
+                + "Press 9 - rename file on local machine\n"
+                + "Press 10 - change file permissions on remote server\n"
+                + "Press 0 - exit\n"
         );
 
-        String userChoice = input.nextLine();
+        userChoice = input.nextLine();
 
+        while (!Objects.equals(userChoice, "0")) {
+            switch (userChoice) {
+                case "0":
+                    System.out.println("exiting");
+                    return;
+                case "1":
+                    uploadOption(ftp);
+                    break;
+                case "2":
+                    downloadOption(ftp);
+                    break;
+                case "3":
+                    System.out.print(ftp.getDirectoriesAndFiles());
+                    break;
+                case "4":
+                    searchFilesOption(ftp);
+                    break;
+                case "5":
+                    System.out.println(listDirectoriesAndFiles());
+                    break;
+                case "6":
+                    searchOption();
+                    break;
+                case "7":
+                    // create directory on remote server
+                    break;
+                case "8":
+                    // delete file on remote server
+                    break;
+                case "9":
+                    // rename file on local machine
+                    break;
+                case "10":
+                    // change file permissions on remote server
+                    break;
+                default:
+                    System.out.println("Invalid input. Please try again.\n\n");
+            }
 
-        if (Objects.equals(userChoice, "1")) {
-            uploadOption(ftp);
-        } else if (Objects.equals(userChoice, "2")) {
-            downloadOption(ftp);
-        } else if (Objects.equals(userChoice, "3")) {
-            System.out.print(ftp.getDirectoriesAndFiles());
-        } else if (Objects.equals(userChoice, "4")) {
-            searchFilesOption(ftp);
-        } else if (Objects.equals(userChoice, "5")) {
-            System.out.println(listDirectoriesAndFiles());
-        } else if (Objects.equals(userChoice, "6")) {
-            searchOption();
-        } else {
-            System.out.println("Exiting");
+            System.out.println(
+                "What would you like to do?\n"
+                    + "Press 1 - upload file(s)\n"
+                    + "Press 2 - download file(s)\n"
+                    + "Press 3 - list all files in current directory on server\n"
+                    + "Press 4 - search for files in directory on server\n"
+                    + "Press 5 - list all files in current directory on local machine\n"
+                    + "Press 6 - search for files in directory on local machine\n"
+                    + "Press 7 - create directory on remote server\n"
+                    + "Press 8 - delete file on remote server\n"
+                    + "Press 9 - rename file on local machine\n"
+                    + "Press 10 - change file permissions on remote server\n"
+                    + "Press 0 - exit\n"
+            );
+
+            userChoice = input.nextLine();
         }
 
+        if (Objects.equals(userChoice, "0")) {
+            System.out.println("exiting");
+        }
     }
 
     private static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
