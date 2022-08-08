@@ -18,20 +18,7 @@ import java.util.Scanner;
 /**
  * Hello world!
  */
-public final class App {
-    private App() {
-    }
-
-    /**
-     * Says hello to the world.
-     *
-     * @param args The arguments of the program.
-     */
-
-    //Was having various crashes when each function had their own scanner.
-    //This seems to fix it.
-    private static Scanner input = new Scanner(System.in);
-
+public class App {
 
     //This class essentially acts as a struct to hold all the info
     //needed to connect to the FTP server.
@@ -55,11 +42,10 @@ public final class App {
         }
     }
 
-    ;
-
     public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
 
-        loginInfo obj = getConnectionInfo();
+        loginInfo obj = getConnectionInfo(input);
         FtpClient ftp = new FtpClient(obj.server, obj.port, obj.username, obj.password);
 
         try {
@@ -70,7 +56,7 @@ public final class App {
         }
 
         try {
-            chooseOption(ftp);
+            chooseOption(ftp, input);
         } catch (IOException | URISyntaxException e) {
             System.err.println(e.getMessage());
         }
@@ -79,7 +65,7 @@ public final class App {
 
     //This function gets all the connection info from the user, and
     //gives them the option to save it to a file for next time.
-    public static loginInfo getConnectionInfo() {
+    public static loginInfo getConnectionInfo(Scanner input) {
         loginInfo obj = new loginInfo();
         String inPort;
         String userInput;
@@ -93,6 +79,7 @@ public final class App {
             fileExists = true;
 
             userInput = input.nextLine().toUpperCase();
+
             if (userInput.equals("Y")) {
                 obj = loadConnectionInfo();
                 //Make sure that loaded info has a username, server and port.
@@ -177,7 +164,7 @@ public final class App {
         return obj;
     }
 
-    private static void chooseOption(FtpClient ftp) throws IOException, URISyntaxException {
+    private static void chooseOption(FtpClient ftp, Scanner input) throws IOException, URISyntaxException {
         String userChoice = "";
 
         System.out.println(
@@ -203,22 +190,22 @@ public final class App {
                     System.out.println("exiting");
                     return;
                 case "1":
-                    uploadOption(ftp);
+                    uploadOption(ftp, input);
                     break;
                 case "2":
-                    downloadOption(ftp);
+                    downloadOption(ftp, input);
                     break;
                 case "3":
                     System.out.print(ftp.getDirectoriesAndFiles());
                     break;
                 case "4":
-                    searchFilesOption(ftp);
+                    searchFilesOption(ftp, input);
                     break;
                 case "5":
                     System.out.println(listDirectoriesAndFiles());
                     break;
                 case "6":
-                    searchOption();
+                    searchOption(input);
                     break;
                 case "7":
                     // create directory on remote server
@@ -259,7 +246,7 @@ public final class App {
         }
     }
 
-    static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
+    static void uploadOption(FtpClient ftp, Scanner input) throws IOException, URISyntaxException {
         int count = 0;
         HashMap<String, String> map = new HashMap<>();
 
@@ -287,7 +274,7 @@ public final class App {
         ftp.putMultipleFiles(map);
     }
 
-    static void downloadOption(FtpClient ftp) throws IOException {
+    static void downloadOption(FtpClient ftp, Scanner input) throws IOException {
         int count = 0;
         HashMap<String, String> map = new HashMap<>();
 
@@ -313,7 +300,7 @@ public final class App {
         ftp.getMultipleFiles(map);
     }
 
-    private static void searchFilesOption(FtpClient ftp) throws IOException  {
+    private static void searchFilesOption(FtpClient ftp, Scanner input) throws IOException  {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
@@ -324,7 +311,7 @@ public final class App {
         System.out.println(ftp.searchFiles(path, fileName));
     }
 
-    private static void searchOption() {
+    private static void searchOption(Scanner input) {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
@@ -339,7 +326,6 @@ public final class App {
      * List all files and directories in the current directory only
      *
      * @return a String that you need to capture in a variable or print out
-     * todo: align printed out text if there is time
      */
     public static String listDirectoriesAndFiles() {
         StringBuilder result = new StringBuilder();

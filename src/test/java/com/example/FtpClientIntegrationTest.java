@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -232,7 +233,7 @@ public class FtpClientIntegrationTest {
             "Remote path for file 1 is: /data/" + System.getProperty("line.separator") +
             "downloaded = true" + System.getProperty("line.separator");
 
-        App.downloadOption(ftpClient);
+        App.downloadOption(ftpClient, new Scanner(System.in));
 
         assertEquals(getOutput(), userOutput);
     }
@@ -240,22 +241,22 @@ public class FtpClientIntegrationTest {
     // I can't get testDownloadOption() and testUploadOption() to run together for some reason, probably related to System.setIn()
     // even though I'm resetting it after each test in the teardown function
 
-//    @Test
-//    public void testUploadOption() throws IOException, URISyntaxException {
-//        String userInput = "1" + System.getProperty("line.separator") +
-//            "helloworld.txt" + System.getProperty("line.separator") +
-//            "/" + System.getProperty("line.separator");
-//        provideInput(userInput);
-//
-//        String userOutput = "How many files would you like to upload?" + System.getProperty("line.separator") +
-//            "Enter file name 1" + System.getProperty("line.separator") +
-//            "File name 1 is: helloworld.txt" + System.getProperty("line.separator") +
-//            "Enter path for file 1" + System.getProperty("line.separator") +
-//            "Path for file 1 is: /" + System.getProperty("line.separator") +
-//            "Uploading files..." + System.getProperty("line.separator");
-//
-//        App.uploadOption(ftpClient);
-//
-//        assertEquals(getOutput(), userOutput);
-//    }
+    @Test
+    public void testUploadOption() throws IOException, URISyntaxException {
+        String userInput = "1" + System.getProperty("line.separator") +
+            "helloworld.txt" + System.getProperty("line.separator") +
+            "/" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "How many files would you like to upload?" + System.getProperty("line.separator") +
+            "Enter file name 1" + System.getProperty("line.separator") +
+            "File name 1 is: helloworld.txt" + System.getProperty("line.separator") +
+            "Enter path for file 1" + System.getProperty("line.separator") +
+            "Path for file 1 is: /" + System.getProperty("line.separator") +
+            "Uploading files..." + System.getProperty("line.separator");
+
+        App.uploadOption(ftpClient, new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
+    }
 }

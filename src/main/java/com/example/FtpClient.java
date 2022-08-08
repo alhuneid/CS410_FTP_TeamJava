@@ -45,7 +45,12 @@ public class FtpClient {
 
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
 
-        ftp.connect(server, port);
+        try {
+            ftp.connect(server, port);
+        } catch (Exception e) {
+            System.err.print(e.getMessage());
+        }
+
         int reply = ftp.getReplyCode();
         System.out.println("Reply : " + reply);
         if (!FTPReply.isPositiveCompletion(reply)) {
