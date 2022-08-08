@@ -259,7 +259,7 @@ public final class App {
         }
     }
 
-    private static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
+    static void uploadOption(FtpClient ftp) throws IOException, URISyntaxException {
         int count = 0;
         HashMap<String, String> map = new HashMap<>();
 
