@@ -216,7 +216,7 @@ public class FtpClientIntegrationTest {
         assertTrue(result.contains(fileName));
 
         String searchResult = ftpClient.searchFiles("", fileName);
-        assertTrue(result.contains(fileName));
+        assertTrue(searchResult.contains(fileName));
     }
 
     @Test
@@ -238,9 +238,6 @@ public class FtpClientIntegrationTest {
         assertEquals(getOutput(), userOutput);
     }
 
-    // I can't get testDownloadOption() and testUploadOption() to run together for some reason, probably related to System.setIn()
-    // even though I'm resetting it after each test in the teardown function
-
     @Test
     public void testUploadOption() throws IOException, URISyntaxException {
         String userInput = "1" + System.getProperty("line.separator") +
@@ -256,6 +253,57 @@ public class FtpClientIntegrationTest {
             "Uploading files..." + System.getProperty("line.separator");
 
         App.uploadOption(ftpClient, new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
+    }
+
+    @Test
+    public void testSearchFilesOnRemoteServerOption() throws IOException {
+        String userInput = "sample.txt" + System.getProperty("line.separator") +
+                "/test" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "Enter file name" + System.getProperty("line.separator") +
+                "File name is: sample.txt" + System.getProperty("line.separator") +
+                "Enter path or blank for current directory" + System.getProperty("line.separator") +
+                "Path is: /test" + System.getProperty("line.separator") +
+                "SEARCH RESULT: sample.txt\n" + System.getProperty("line.separator");
+
+        App.searchFilesOption(ftpClient, new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
+    }
+
+    // yes this test is jank and it only checks for whether pom.xml exists on the
+    // user's location machine. The alternative is to use Mockito.
+    @Test
+    public void testSearchFilesOnLocalMachineOption() throws IOException {
+        String userInput = "pom.xml" + System.getProperty("line.separator") +
+                "" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "Enter file name" + System.getProperty("line.separator") +
+                "File name is: pom.xml" + System.getProperty("line.separator") +
+                "Enter path or blank for current directory" + System.getProperty("line.separator") +
+                "Path is: " + System.getProperty("line.separator") +
+                "SEARCH RESULT: pom.xml\n" + System.getProperty("line.separator");
+
+        App.searchOption(new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
+    }
+
+    @Test
+    public void testDownloadNegativeAndZeroFilesOption() throws IOException {
+        String userInput = "-10" + System.getProperty("line.separator") +
+                "0" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "How many files would you like to download?" + System.getProperty("line.separator") +
+                "Invalid response. Please input an integer greater than zero." + System.getProperty("line.separator") +
+                "How many files would you like to upload?" + System.getProperty("line.separator");
+
+        App.downloadOption(ftpClient, new Scanner(System.in));
 
         assertEquals(getOutput(), userOutput);
     }

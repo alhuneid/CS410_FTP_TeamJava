@@ -300,7 +300,11 @@ public class App {
         ftp.getMultipleFiles(map);
     }
 
-    private static void searchFilesOption(FtpClient ftp, Scanner input) throws IOException  {
+    /**
+     * This method is displaying prompts to the user when they choose the option
+     * to display files on the SERVER.
+     */
+    static void searchFilesOption(FtpClient ftp, Scanner input) throws IOException  {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
@@ -311,7 +315,11 @@ public class App {
         System.out.println(ftp.searchFiles(path, fileName));
     }
 
-    private static void searchOption(Scanner input) {
+    /**
+     * This method is displaying prompts to the user when they choose the option
+     * to display files on their LOCAL MACHINE.
+     */
+    static void searchOption(Scanner input) {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);
