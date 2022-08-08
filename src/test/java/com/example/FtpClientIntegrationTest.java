@@ -10,13 +10,11 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
-import java.io.PrintStream;
 import java.util.HashMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -94,7 +92,7 @@ public class FtpClientIntegrationTest {
         boolean deleted = new File(destFile).delete();
         assertTrue(deleted);
     }
-    
+
     @Test
     public void change_permission_on_remote_server() throws IOException {
         boolean changePermission = ftpClient.changePermissionOnRemoteFile(dirPath);
@@ -194,5 +192,33 @@ public class FtpClientIntegrationTest {
 
         String searchResult = ftpClient.searchFiles("", fileName);
         assertTrue(result.contains(fileName));
+    }
+
+    @Test
+    public void testDownloadOption() throws IOException {
+        String userInput = "1" + System.getProperty("line.separator") +
+            "foobar.txt" + System.getProperty("line.separator") +
+            "/data/" + System.getProperty("line.separator");
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String userOutput = "How many files would you like to download?" + System.getProperty("line.separator") +
+            "Enter file name 1" + System.getProperty("line.separator") +
+            "File name 1 is: foobar.txt" + System.getProperty("line.separator") +
+            "Enter remote path for file 1" + System.getProperty("line.separator") +
+            "Remote path for file 1 is: /" + System.getProperty("line.separator") +
+            "downloaded = true" + System.getProperty("line.separator");
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(output);
+        System.setOut(printStream);
+
+        App.downloadOption(ftpClient);
+
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length-1];
+
+        String[] lines2 = userOutput.split(System.lineSeparator());
+        String expected = lines2[lines2.length-1];
+
+        assertEquals(actual, expected);
     }
 }

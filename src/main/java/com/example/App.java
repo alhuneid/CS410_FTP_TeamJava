@@ -287,7 +287,7 @@ public final class App {
         ftp.putMultipleFiles(map);
     }
 
-    private static void downloadOption(FtpClient ftp) throws IOException {
+    static void downloadOption(FtpClient ftp) throws IOException {
         int count = 0;
         HashMap<String, String> map = new HashMap<>();
 
