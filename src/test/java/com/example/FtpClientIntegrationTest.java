@@ -10,13 +10,13 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Collection;
-import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Scanner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -25,18 +25,22 @@ public class FtpClientIntegrationTest {
     private FakeFtpServer fakeFtpServer;
 
     private FtpClient ftpClient;
-    private static String dirPath = "/data";
-    private static String fileName = "foobar.txt";
+    private String dirPath = "/data";
+    private String fileName = "foobar.txt";
     private static String fromFilePath;
     private static String toFilePath;
 
     /**
      *  private variables for utilizing streams to check for system outputs
      */
+    private InputStream systemIn;
+    private PrintStream systemOut;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
+    private ByteArrayInputStream testIn;
+    private ByteArrayOutputStream testOut;
 
     @Before
     public void setup() throws IOException {
@@ -56,6 +60,20 @@ public class FtpClientIntegrationTest {
 
         ftpClient = new FtpClient("localhost", fakeFtpServer.getServerControlPort(), "user", "password");
         ftpClient.open();
+
+        testOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(testOut));
+        systemIn = System.in;
+        systemOut = System.out;
+    }
+
+    private void provideInput(String data) throws IOException {
+        testIn = new ByteArrayInputStream(data.getBytes());
+        System.setIn(testIn);
+    }
+
+    private String getOutput() {
+        return testOut.toString();
     }
 
     @After
@@ -63,6 +81,11 @@ public class FtpClientIntegrationTest {
         System.out.println("Calling Teardown");
         ftpClient.close();
         fakeFtpServer.stop();
+        ftpClient = null;
+        fakeFtpServer = null;
+        System.setIn(systemIn);
+        System.setOut(systemOut);
+        testOut.flush();
     }
 
     @Test
@@ -94,7 +117,7 @@ public class FtpClientIntegrationTest {
         boolean deleted = new File(destFile).delete();
         assertTrue(deleted);
     }
-    
+
     @Test
     public void change_permission_on_remote_server() throws IOException {
         boolean changePermission = ftpClient.changePermissionOnRemoteFile(dirPath);
@@ -194,5 +217,46 @@ public class FtpClientIntegrationTest {
 
         String searchResult = ftpClient.searchFiles("", fileName);
         assertTrue(result.contains(fileName));
+    }
+
+    @Test
+    public void testDownloadOption() throws IOException {
+        String userInput = "1" + System.getProperty("line.separator") +
+            "foobar.txt" + System.getProperty("line.separator") +
+            "/data/" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "How many files would you like to download?" + System.getProperty("line.separator") +
+            "Enter file name 1" + System.getProperty("line.separator") +
+            "File name 1 is: foobar.txt" + System.getProperty("line.separator") +
+            "Enter remote path for file 1" + System.getProperty("line.separator") +
+            "Remote path for file 1 is: /data/" + System.getProperty("line.separator") +
+            "downloaded = true" + System.getProperty("line.separator");
+
+        App.downloadOption(ftpClient, new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
+    }
+
+    // I can't get testDownloadOption() and testUploadOption() to run together for some reason, probably related to System.setIn()
+    // even though I'm resetting it after each test in the teardown function
+
+    @Test
+    public void testUploadOption() throws IOException, URISyntaxException {
+        String userInput = "1" + System.getProperty("line.separator") +
+            "helloworld.txt" + System.getProperty("line.separator") +
+            "/" + System.getProperty("line.separator");
+        provideInput(userInput);
+
+        String userOutput = "How many files would you like to upload?" + System.getProperty("line.separator") +
+            "Enter file name 1" + System.getProperty("line.separator") +
+            "File name 1 is: helloworld.txt" + System.getProperty("line.separator") +
+            "Enter path for file 1" + System.getProperty("line.separator") +
+            "Path for file 1 is: /" + System.getProperty("line.separator") +
+            "Uploading files..." + System.getProperty("line.separator");
+
+        App.uploadOption(ftpClient, new Scanner(System.in));
+
+        assertEquals(getOutput(), userOutput);
     }
 }
