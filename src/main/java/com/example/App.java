@@ -205,16 +205,20 @@ public class App {
                     searchOption(input);
                     break;
                 case "7":
+                    createDirectoryOnRemote(ftp, input);
                     // create directory on remote server
                     break;
                 case "8":
                     // delete file on remote server
+                    deleteFileOnRemote(ftp, input);
                     break;
                 case "9":
                     // rename file on local machine
+                    renameFileOnLocalMachine(ftp, input);
                     break;
                 case "10":
                     // change file permissions on remote server
+                    changePermissionOnRemote(ftp, input);
                     break;
                 case "11":
                     // delete directory from remote
@@ -336,8 +340,41 @@ public class App {
         System.out.println("Enter path or blank for current directory");
         String path = input.nextLine();
         System.out.println("Path is: " + path);
-
         System.out.println(searchFiles(path, fileName));
+    }
+
+    private static void createDirectoryOnRemote(FtpClient ftp, Scanner input) throws IOException {
+        System.out.println("Enter Directory name or blank for current directory");
+        String directory = input.nextLine();
+        System.out.println("Directory name is: " + directory);
+        System.out.println(ftp.createDirectory(directory));
+    }
+
+    private static void deleteFileOnRemote(FtpClient ftp, Scanner input) throws IOException {
+        System.out.println("Enter file name");
+        String fileName = input.nextLine();
+        System.out.println("File name is: " + fileName);
+        System.out.println("Enter path or blank for current directory");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
+        System.out.println(ftp.deleteFile(path, fileName));
+    }
+
+    private static void renameFileOnLocalMachine(FtpClient ftp, Scanner input) throws IOException {
+        System.out.println("Enter source file name");
+        String sourceFileName = input.nextLine();
+        System.out.println("Source File is: " + sourceFileName);
+        System.out.println("Enter target file name");
+        String targetFileName = input.nextLine();
+        System.out.println("Target file is: " + targetFileName);
+        System.out.println(ftp.renameLocalFile(sourceFileName, targetFileName));
+    }
+
+    private static void changePermissionOnRemote(FtpClient ftp, Scanner input) throws IOException {
+        System.out.println("Enter Directory name or blank for current directory");
+        String directory = input.nextLine();
+        System.out.println("Directory name is: " + directory);
+        System.out.println(ftp.changePermissionOnRemoteFile(directory));
     }
 
     /**
