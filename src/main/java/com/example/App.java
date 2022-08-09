@@ -218,6 +218,7 @@ public class App {
                     break;
                 case "11":
                     // delete directory from remote
+                    deleteDirectoryOption(ftp, input);
                     break;
                 default:
                     System.out.println("Invalid input. Please try again.\n\n");
@@ -244,6 +245,15 @@ public class App {
         if (Objects.equals(userChoice, "0")) {
             System.out.println("exiting");
         }
+    }
+
+    static void deleteDirectoryOption(FtpClient ftp, Scanner input) {
+        System.out.println("Enter path or blank for current directory");
+        String path = input.nextLine();
+        System.out.println("Path is: " + path);
+
+        ftp.deleteDirectoryFromRemote(path);
+
     }
 
     static void uploadOption(FtpClient ftp, Scanner input) throws IOException, URISyntaxException {
