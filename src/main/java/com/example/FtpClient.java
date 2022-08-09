@@ -253,9 +253,9 @@ public class FtpClient {
         return returnedText.toString();
     }
 
-    void deleteDirectoryFromRemote(String Path) {
+    void deleteDirectoryFromRemote(String path) {
         try {
-            boolean removeDir = ftp.removeDirectory(Path);
+            boolean removeDir = ftp.removeDirectory(path);
             if (removeDir) {
                 System.out.println("Directory successfully removed!");
             } else {
