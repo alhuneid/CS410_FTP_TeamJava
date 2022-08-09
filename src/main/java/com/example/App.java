@@ -14,14 +14,13 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
-
 /**
  * Hello world!
  */
 public class App {
 
-    //This class essentially acts as a struct to hold all the info
-    //needed to connect to the FTP server.
+    // This class essentially acts as a struct to hold all the info
+    // needed to connect to the FTP server.
     static class loginInfo {
         String username;
         String password;
@@ -63,8 +62,8 @@ public class App {
 
     }
 
-    //This function gets all the connection info from the user, and
-    //gives them the option to save it to a file for next time.
+    // This function gets all the connection info from the user, and
+    // gives them the option to save it to a file for next time.
     public static loginInfo getConnectionInfo(Scanner input) {
         loginInfo obj = new loginInfo();
         String inPort;
@@ -72,7 +71,6 @@ public class App {
         boolean fileExists = false;
 
         File connectionInfo = new File("connectionInfo.txt");
-
 
         if (connectionInfo.isFile()) {
             System.out.println("Saved connection information found. Would you like to load? Y/N");
@@ -82,7 +80,7 @@ public class App {
 
             if (userInput.equals("Y")) {
                 obj = loadConnectionInfo();
-                //Make sure that loaded info has a username, server and port.
+                // Make sure that loaded info has a username, server and port.
                 if (!obj.isValid()) {
                     System.out.println("Connection info bad or not valid, please enter connection info manually.");
                 } else {
@@ -90,7 +88,6 @@ public class App {
                 }
             }
         }
-
 
         System.out.println("Enter username");
         obj.username = input.nextLine();
@@ -111,7 +108,7 @@ public class App {
         // input.close();
 
         if (userInput.equals("Y")) {
-            //If no file exists, create one now:
+            // If no file exists, create one now:
             if (!fileExists) {
                 try {
                     connectionInfo.createNewFile();
@@ -137,7 +134,7 @@ public class App {
         return obj;
     }
 
-    //Loads info from file.
+    // Loads info from file.
     public static loginInfo loadConnectionInfo() {
         loginInfo obj = new loginInfo();
 
@@ -168,19 +165,19 @@ public class App {
         String userChoice = "";
 
         System.out.println(
-            "What would you like to do?\n"
-                + "Press 1 - upload file(s)\n"
-                + "Press 2 - download file(s)\n"
-                + "Press 3 - list all files in current directory on server\n"
-                + "Press 4 - search for files in directory on server\n"
-                + "Press 5 - list all files in current directory on local machine\n"
-                + "Press 6 - search for files in directory on local machine\n"
-                + "Press 7 - create directory on remote server\n"
-                + "Press 8 - delete file on remote server\n"
-                + "Press 9 - rename file on local machine\n"
-                + "Press 10 - change file permissions on remote server\n"
-                + "Press 0 - exit\n"
-        );
+                "What would you like to do?\n"
+                        + "Press 1 - upload file(s)\n"
+                        + "Press 2 - download file(s)\n"
+                        + "Press 3 - list all files in current directory on server\n"
+                        + "Press 4 - search for files in directory on server\n"
+                        + "Press 5 - list all files in current directory on local machine\n"
+                        + "Press 6 - search for files in directory on local machine\n"
+                        + "Press 7 - create directory on remote server\n"
+                        + "Press 8 - delete file on remote server\n"
+                        + "Press 9 - rename file on local machine\n"
+                        + "Press 10 - change file permissions on remote server\n"
+                        + "Press 11 - delete directory on remote server"
+                        + "Press 0 - exit\n");
 
         userChoice = input.nextLine();
 
@@ -219,24 +216,27 @@ public class App {
                 case "10":
                     // change file permissions on remote server
                     break;
+                case "11":
+                    // delete directory from remote
+                    break;
                 default:
                     System.out.println("Invalid input. Please try again.\n\n");
             }
 
             System.out.println(
-                "What would you like to do?\n"
-                    + "Press 1 - upload file(s)\n"
-                    + "Press 2 - download file(s)\n"
-                    + "Press 3 - list all files in current directory on server\n"
-                    + "Press 4 - search for files in directory on server\n"
-                    + "Press 5 - list all files in current directory on local machine\n"
-                    + "Press 6 - search for files in directory on local machine\n"
-                    + "Press 7 - create directory on remote server\n"
-                    + "Press 8 - delete file on remote server\n"
-                    + "Press 9 - rename file on local machine\n"
-                    + "Press 10 - change file permissions on remote server\n"
-                    + "Press 0 - exit\n"
-            );
+                    "What would you like to do?\n"
+                            + "Press 1 - upload file(s)\n"
+                            + "Press 2 - download file(s)\n"
+                            + "Press 3 - list all files in current directory on server\n"
+                            + "Press 4 - search for files in directory on server\n"
+                            + "Press 5 - list all files in current directory on local machine\n"
+                            + "Press 6 - search for files in directory on local machine\n"
+                            + "Press 7 - create directory on remote server\n"
+                            + "Press 8 - delete file on remote server\n"
+                            + "Press 9 - rename file on local machine\n"
+                            + "Press 10 - change file permissions on remote server\n"
+                            + "Press 11 - delete directory on remote server"
+                            + "Press 0 - exit\n");
 
             userChoice = input.nextLine();
         }
@@ -266,7 +266,7 @@ public class App {
             System.out.println("Enter path for file " + i);
             String path = input.nextLine();
             System.out.println("Path for file " + i + " is: " + path);
-            map.put(fileName,path);
+            map.put(fileName, path);
         }
 
         System.out.println("Uploading files...");
@@ -294,7 +294,7 @@ public class App {
             System.out.println("Enter remote path for file " + i);
             String path = input.nextLine();
             System.out.println("Remote path for file " + i + " is: " + path);
-            map.put(fileName,path);
+            map.put(fileName, path);
         }
 
         ftp.getMultipleFiles(map);
@@ -304,7 +304,7 @@ public class App {
      * This method is displaying prompts to the user when they choose the option
      * to display files on the SERVER.
      */
-    static void searchFilesOption(FtpClient ftp, Scanner input) throws IOException  {
+    static void searchFilesOption(FtpClient ftp, Scanner input) throws IOException {
         System.out.println("Enter file name");
         String fileName = input.nextLine();
         System.out.println("File name is: " + fileName);

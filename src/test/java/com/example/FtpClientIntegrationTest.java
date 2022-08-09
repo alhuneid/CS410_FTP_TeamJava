@@ -19,7 +19,6 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class FtpClientIntegrationTest {
 
     private FakeFtpServer fakeFtpServer;
@@ -31,7 +30,7 @@ public class FtpClientIntegrationTest {
     private static String toFilePath;
 
     /**
-     *  private variables for utilizing streams to check for system outputs
+     * private variables for utilizing streams to check for system outputs
      */
     private InputStream systemIn;
     private PrintStream systemOut;
@@ -49,7 +48,7 @@ public class FtpClientIntegrationTest {
 
         FileSystem fileSystem = new UnixFakeFileSystem();
         fileSystem.add(new DirectoryEntry(dirPath));
-        fileSystem.add(new FileEntry(dirPath +"/"+fileName, "abcdef 1234567890"));
+        fileSystem.add(new FileEntry(dirPath + "/" + fileName, "abcdef 1234567890"));
         fileSystem.add(new DirectoryEntry("/test"));
         fileSystem.add(new FileEntry("/test/sample.txt", "1234567890 abcdef"));
 
@@ -153,9 +152,10 @@ public class FtpClientIntegrationTest {
     public void getFileTest() throws IOException {
         String fileName = "foobar.txt";
         String remotePath = "/data/";
-        //Ensure to use file seperator to work on all operation system
+        // Ensure to use file seperator to work on all operation system
         String fileSep = System.getProperty("file.separator");
-        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep +"resources"+ fileSep;
+        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep + "resources"
+                + fileSep;
         ftpClient.getFile(fileName, remotePath);
         File file = new File(localPath + fileName);
         System.out.println(file.getAbsolutePath());
@@ -169,7 +169,8 @@ public class FtpClientIntegrationTest {
         String remotePath2 = "/test/";
         String fileName2 = "sample.txt";
         String fileSep = System.getProperty("file.separator");
-        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep +"resources"+ fileSep;
+        String localPath = System.getProperty("user.dir") + fileSep + "src" + fileSep + "main" + fileSep + "resources"
+                + fileSep;
 
         HashMap<String, String> map = new HashMap<>();
         map.put(fileName1, remotePath);
@@ -222,16 +223,16 @@ public class FtpClientIntegrationTest {
     @Test
     public void testDownloadOption() throws IOException {
         String userInput = "1" + System.getProperty("line.separator") +
-            "foobar.txt" + System.getProperty("line.separator") +
-            "/data/" + System.getProperty("line.separator");
+                "foobar.txt" + System.getProperty("line.separator") +
+                "/data/" + System.getProperty("line.separator");
         provideInput(userInput);
 
         String userOutput = "How many files would you like to download?" + System.getProperty("line.separator") +
-            "Enter file name 1" + System.getProperty("line.separator") +
-            "File name 1 is: foobar.txt" + System.getProperty("line.separator") +
-            "Enter remote path for file 1" + System.getProperty("line.separator") +
-            "Remote path for file 1 is: /data/" + System.getProperty("line.separator") +
-            "downloaded = true" + System.getProperty("line.separator");
+                "Enter file name 1" + System.getProperty("line.separator") +
+                "File name 1 is: foobar.txt" + System.getProperty("line.separator") +
+                "Enter remote path for file 1" + System.getProperty("line.separator") +
+                "Remote path for file 1 is: /data/" + System.getProperty("line.separator") +
+                "downloaded = true" + System.getProperty("line.separator");
 
         App.downloadOption(ftpClient, new Scanner(System.in));
 
@@ -241,16 +242,16 @@ public class FtpClientIntegrationTest {
     @Test
     public void testUploadOption() throws IOException, URISyntaxException {
         String userInput = "1" + System.getProperty("line.separator") +
-            "helloworld.txt" + System.getProperty("line.separator") +
-            "/" + System.getProperty("line.separator");
+                "helloworld.txt" + System.getProperty("line.separator") +
+                "/" + System.getProperty("line.separator");
         provideInput(userInput);
 
         String userOutput = "How many files would you like to upload?" + System.getProperty("line.separator") +
-            "Enter file name 1" + System.getProperty("line.separator") +
-            "File name 1 is: helloworld.txt" + System.getProperty("line.separator") +
-            "Enter path for file 1" + System.getProperty("line.separator") +
-            "Path for file 1 is: /" + System.getProperty("line.separator") +
-            "Uploading files..." + System.getProperty("line.separator");
+                "Enter file name 1" + System.getProperty("line.separator") +
+                "File name 1 is: helloworld.txt" + System.getProperty("line.separator") +
+                "Enter path for file 1" + System.getProperty("line.separator") +
+                "Path for file 1 is: /" + System.getProperty("line.separator") +
+                "Uploading files..." + System.getProperty("line.separator");
 
         App.uploadOption(ftpClient, new Scanner(System.in));
 
@@ -307,4 +308,11 @@ public class FtpClientIntegrationTest {
 
         assertEquals(getOutput(), userOutput);
     }
+
+    @Test
+    public void deleteDirectoryFromRemote() throws IOException {
+        boolean result = ftpClient.createDirectory("/subdir");
+        assertTrue(result);
+    }
+
 }

@@ -75,7 +75,7 @@ public class FtpClient {
             System.out.println("Failed to create directory " + dirPath);
             throw ioe;
         }
-        System.out.println("Successfully created: " + dirPath +" flag="+success);
+        System.out.println("Successfully created: " + dirPath + " flag=" + success);
         return success;
     }
 
@@ -92,16 +92,16 @@ public class FtpClient {
         System.out.println("File '" + deleted + "' deleted...");
         return deleted;
     }
-    
+
     // rename file on local machine
     public boolean renameLocalFile(String fromFilePath, String toFilePath) throws IOException {
         boolean renamed = false;
         File fromFile = new File(fromFilePath);
         File toFile = new File(toFilePath);
-        
-        System.out.println("from file -----> "+fromFile.getAbsolutePath());
+
+        System.out.println("from file -----> " + fromFile.getAbsolutePath());
         renamed = fromFile.renameTo(toFile);
-        System.out.println("File " + fromFile + " renamed to "+toFile + " renamed="+renamed);
+        System.out.println("File " + fromFile + " renamed to " + toFile + " renamed=" + renamed);
         return renamed;
     }
 
@@ -110,9 +110,9 @@ public class FtpClient {
         boolean changePermission = false;
         try {
             changePermission = ftp.sendSiteCommand("chmod " + "755 " + dirPath);
-        }catch (IOException ioe){
+        } catch (IOException ioe) {
             System.out.println("Unable to change permission for  " + dirPath);
-            throw ioe;            
+            throw ioe;
         }
         System.out.println("Permission updated for " + dirPath);
         return changePermission;
@@ -122,7 +122,7 @@ public class FtpClient {
      * This method will upload the designated file to the ftp server
      *
      * @param fileName name of the file
-     * @param path path of the file
+     * @param path     path of the file
      * @throws IOException
      */
     void putFile(String fileName, String path) throws IOException {
@@ -149,7 +149,7 @@ public class FtpClient {
     /**
      * This method will download the designated file from the ftp server
      *
-     * @param fileName name of the file
+     * @param fileName   name of the file
      * @param remotePath remote path of the file
      * @throws IOException
      */
@@ -157,7 +157,7 @@ public class FtpClient {
         String localPath = System.getProperty("user.dir") + "/src/main/resources/";
         FileOutputStream out = new FileOutputStream(localPath + fileName);
         boolean download = ftp.retrieveFile(remotePath + fileName, out);
-        System.out.println("downloaded = "+download);
+        System.out.println("downloaded = " + download);
         out.close();
     }
 
@@ -179,8 +179,9 @@ public class FtpClient {
      * Use this function to return the directories and files included in the
      * current directory (like the "ls" command in Linux). You will need to do
      * System.out.println with the String that's returned back from this method.
+     * 
      * @return a String with the current files and directories, along with
-     *          their sizes and the dates they were last changed
+     *         their sizes and the dates they were last changed
      */
     String getDirectoriesAndFiles() {
         StringBuilder result = new StringBuilder();
@@ -208,6 +209,7 @@ public class FtpClient {
      * Use this to go into or out of a directory (like the "cd" command on Linux
      * to go up one level, use 'changeDirectory("..")'
      * to go down one level, use 'changeDirectory("folder-name")'
+     * 
      * @param path name of folder to drill down into
      */
     void changeDirectory(String path) {
@@ -222,14 +224,13 @@ public class FtpClient {
         }
     }
 
-    String searchFiles(String dirToSearch, String searchString){
+    String searchFiles(String dirToSearch, String searchString) {
         FTPFile[] result = null;
         String directory = ".";
         StringBuilder returnedText = new StringBuilder();
 
         // implement FTPFileFilter interface and override accept() method
-        FTPFileFilter myFilter = ftpFile -> (
-            ftpFile.isFile() && ftpFile.getName().contains(searchString));
+        FTPFileFilter myFilter = ftpFile -> (ftpFile.isFile() && ftpFile.getName().contains(searchString));
 
         // if the directory is empty then just search in the current directory, else...
         if (!dirToSearch.equals("")) {
@@ -250,5 +251,18 @@ public class FtpClient {
         }
 
         return returnedText.toString();
+    }
+
+    void deleteDirectoryFromRemote(String Path) {
+        try {
+            boolean removeDir = ftp.removeDirectory(Path);
+            if (removeDir) {
+                System.out.println("Directory successfully removed!");
+            } else {
+                System.out.println("Could not remove directory");
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
