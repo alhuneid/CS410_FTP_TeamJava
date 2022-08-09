@@ -268,7 +268,7 @@ public class FtpClientIntegrationTest {
                 "File name is: sample.txt" + System.getProperty("line.separator") +
                 "Enter path or blank for current directory" + System.getProperty("line.separator") +
                 "Path is: /test" + System.getProperty("line.separator") +
-                "SEARCH RESULT: sample.txt\n" + System.getProperty("line.separator");
+                "SEARCH RESULT: \nsample.txt\n" + System.getProperty("line.separator");
 
         App.searchFilesOption(ftpClient, new Scanner(System.in));
 
@@ -287,7 +287,7 @@ public class FtpClientIntegrationTest {
                 "File name is: pom.xml" + System.getProperty("line.separator") +
                 "Enter path or blank for current directory" + System.getProperty("line.separator") +
                 "Path is: " + System.getProperty("line.separator") +
-                "SEARCH RESULT: pom.xml\n" + System.getProperty("line.separator");
+                "SEARCH RESULT: \npom.xml\n" + System.getProperty("line.separator");
 
         App.searchOption(new Scanner(System.in));
 

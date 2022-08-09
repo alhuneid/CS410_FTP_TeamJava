@@ -179,7 +179,7 @@ public class FtpClient {
      * Use this function to return the directories and files included in the
      * current directory (like the "ls" command in Linux). You will need to do
      * System.out.println with the String that's returned back from this method.
-     * 
+     *
      * @return a String with the current files and directories, along with
      *         their sizes and the dates they were last changed
      */
@@ -209,7 +209,7 @@ public class FtpClient {
      * Use this to go into or out of a directory (like the "cd" command on Linux
      * to go up one level, use 'changeDirectory("..")'
      * to go down one level, use 'changeDirectory("folder-name")'
-     * 
+     *
      * @param path name of folder to drill down into
      */
     void changeDirectory(String path) {
@@ -244,7 +244,7 @@ public class FtpClient {
         }
 
         if (result != null && result.length > 0) {
-            returnedText.append("SEARCH RESULT: ");
+            returnedText.append("SEARCH RESULT: \n");
             for (FTPFile aFile : result) {
                 returnedText.append(aFile.getName()).append("\n");
             }
